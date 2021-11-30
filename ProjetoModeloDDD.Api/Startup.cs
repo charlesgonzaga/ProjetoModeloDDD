@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using FluentValidation.AspNetCore;
 
 namespace ProjetoModeloDDD.Api
 {
@@ -22,6 +23,7 @@ namespace ProjetoModeloDDD.Api
             services
                 .ResolveContext(Configuration)
                 .ResolveDependencies(Configuration)
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .AddAutoMapper(typeof(MappingProfile));
 
             services.AddControllers();
