@@ -1,11 +1,14 @@
-﻿using ProjetoModeloDDD.Domain.DTOs.Configurations;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using Polly.Extensions.Http;
+using ProjetoModeloDDD.Domain.DTOs.Configurations;
 using ProjetoModeloDDD.Domain.Interfaces.Repositories;
 using ProjetoModeloDDD.Domain.Interfaces.Services;
 using ProjetoModeloDDD.Infra.Repositories;
 using ProjetoModeloDDD.Service;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Net.Http;
 
 namespace ProjetoModeloDDD.Infra.CrossCutting
 {
@@ -29,7 +32,11 @@ namespace ProjetoModeloDDD.Infra.CrossCutting
             services.AddScoped<IPessoaService, PessoaService>();
 
             var secao = configuration.GetSection("StarWarsService");
-            services.AddHttpClient<IStarWarsService, StarWarsService>(client => client.BaseAddress = new Uri(secao["UrlBase"]));
+            services.AddHttpClient<IStarWarsService, StarWarsService>(
+                        client => client.BaseAddress = new Uri(secao["UrlBase"])
+                    )
+                    .AddPolicyHandler(GetRetryPolicy())
+                    .AddPolicyHandler(GetCircuitBreakerPolicy());
 
             return services;
         }
@@ -40,5 +47,15 @@ namespace ProjetoModeloDDD.Infra.CrossCutting
 
             return services;
         }
+
+        private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+            => HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
+
+        private static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
+            => HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
     }
 }
