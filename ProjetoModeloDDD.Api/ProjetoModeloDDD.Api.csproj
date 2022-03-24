@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ProjetoModeloDDD.Domain\ProjetoModeloDDD.Domain.csproj" />
     <ProjectReference Include="..\ProjetoModeloDDD.Infra.CrossCutting\ProjetoModeloDDD.Infra.CrossCutting.csproj" />
   </ItemGroup>
 
