@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace ProjetoModeloDDD.Infra
 {
-    public class UnitOfWork<T> : IUnitOfWork<T> where T : DbContext
+    public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbContext
     {
-        private readonly T _context;
+        private readonly TContext _context;
 
-        public UnitOfWork(T context)
+        public UnitOfWork(TContext context)
         {
             _context = context;
         }

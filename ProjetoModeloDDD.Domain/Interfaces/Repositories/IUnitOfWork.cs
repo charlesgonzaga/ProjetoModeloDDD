@@ -2,7 +2,7 @@
 
 namespace ProjetoModeloDDD.Domain.Interfaces.Repositories
 {
-    public interface IUnitOfWork<T> where T : class
+    public interface IUnitOfWork<TContext>
     {
         Task CommitAsync();
     }
