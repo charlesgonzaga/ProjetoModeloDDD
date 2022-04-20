@@ -10,11 +10,11 @@ namespace ProjetoModeloDDD.Api.FluentValidation
         {
             RuleFor(x => x.Nome)
                 .Length(3, 20)
-                .WithMessage("Nome requer entre 3 e 20 caracteres!");
+                .WithMessage(string.Format(ApiResource.CampoInvalido, "Nome"));
 
             RuleFor(x => x.DataNascimento)
                 .Must(ValidarData)
-                .WithMessage("DataNascimento é obrigatório.");
+                .WithMessage(string.Format(ApiResource.CampoInvalido, "DataNascimento"));
         }
 
         private bool ValidarData(DateTime data)
